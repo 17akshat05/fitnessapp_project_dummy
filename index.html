@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Signup</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 80%;
+      max-width: 800px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .form-container {
+      background-color: #1c1c1c;
+      padding: 20px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .form-container h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 5px;
+      background-color: #2a2a2a;
+      color: #fff;
+    }
+    .form-group input::placeholder {
+      color: #777;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background-color: #f45b69;
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #d33f52;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #f45b69;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .checkbox-group input {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Login Form -->
+    <div class="form-container">
+      <h2>Log In</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn">Log in</button>
+      </form>
+      <div class="footer">
+        Don't have an account? <a href="#signup">Sign up</a>
+      </div>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="form-container" id="signup">
+      <h2>Sign Up</h2>
+      <form id="signupForm">
+        <div class="form-group">
+          <label for="signup-firstname">First Name</label>
+          <input type="text" id="signup-firstname" placeholder="Enter your first name" required>
+        </div>
+        <div class="form-group">
+          <label for="signup-lastname">Last Name</label>
+          <input type="text" id="signup-lastname" placeholder="Enter your last name" required>
+        </div>
+        <div class="form-group">
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn">Sign up</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Initialize EmailJS
+    emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
+
+    // Save user data in localStorage
+    function saveUser(email, password) {
+      localStorage.setItem(email, password);
+    }
+
+    // Signup form submission
+    document.getElementById("signupForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const firstname = document.getElementById("signup-firstname").value;
+      const lastname = document.getElementById("signup-lastname").value;
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
+
+      // Save user data locally
+      saveUser(email, password);
+
+      // Send confirmation email
+      emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+      }).then(
+        function () {
+          Swal.fire("Success!", "Account created! Please log in.", "success");
+        },
+        function (error) {
+          Swal.fire("Error!", "Could not send email.", "error");
+        }
+      );
+    });
+
+    // Login form submission
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+
+      const storedPassword = localStorage.getItem(email);
+
+      if (storedPassword === password) {
+        Swal.fire("Welcome!", "Login successful!", "success").then(() => {
+          window.location.href = "ui.html";
+        });
+      } else {
+        Swal.fire("Error!", "Invalid email or password.", "error");
+      }
+    });
+  </script>
+</body>
+</html>
